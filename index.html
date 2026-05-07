@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SynerSage CRM</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;--bg2:#f9fafb;--bg3:#f3f4f6;--bg4:#e9ecef;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --text:#111827;--text2:#6b7280;--text3:#9ca3af;--text4:#d1d5db;
+  --blue:#2563eb;--blue2:#1d4ed8;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --green:#15803d;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --amber:#b45309;--amber-bg:#fffbeb;--amber-border:#fde68a;
+  --red:#dc2626;--red-bg:#fef2f2;--red-border:#fecaca;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;--purple-border:#ddd6fe;
+  --top:#0f172a;--top-text:#f1f5f9;--top-border:#1e293b;
+  --r:6px;--r2:10px;--r3:14px;
+  --sh:0 1px 2px rgba(0,0,0,.05);
+  --sh2:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -1px rgba(0,0,0,.05);
+  --sh3:0 10px 25px -5px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;font-size:13px;color:var(--text);background:var(--bg2);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── Auth screen ── */
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--top);background-image:radial-gradient(ellipse at 50% 0%,#1e3a5f 0%,#0f172a 70%)}
+.auth-card{width:380px;padding:44px 40px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;box-shadow:0 25px 50px rgba(0,0,0,.5)}
+.auth-logo{font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:700;letter-spacing:.04em;color:#f1f5f9;margin-bottom:5px;padding-bottom:6px;border-bottom:1.5px solid rgba(241,245,249,.35);display:inline-block}
+.auth-tagline{color:#64748b;font-size:12px;margin-bottom:32px;margin-top:8px}
+.auth-label{display:block;font-size:11px;font-weight:600;color:#94a3b8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px}
+.auth-input{width:100%;padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);font-size:14px;color:#f1f5f9;outline:none;font-family:inherit}
+.auth-input:focus{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.07)}
+.auth-input::placeholder{color:#475569}
+.auth-btn{width:100%;margin-top:20px;padding:11px;background:#f1f5f9;color:#0f172a;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.02em;font-family:inherit}
+.auth-btn:hover{background:#fff}
+.auth-error{margin-top:12px;color:#f87171;font-size:12px;text-align:center}
+
+/* ── App shell ── */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.topbar{background:var(--top);border-bottom:1px solid var(--top-border);padding:0 20px;display:flex;align-items:center;height:52px;gap:12px;flex-shrink:0}
+.brand{font-family:Georgia,'Times New Roman',serif;font-size:17px;font-weight:700;letter-spacing:.04em;color:var(--top-text);padding-bottom:3px;border-bottom:1.5px solid rgba(241,245,249,.4);white-space:nowrap;cursor:default;user-select:none}
+.topbar-sep{width:1px;height:20px;background:var(--top-border);flex-shrink:0}
+.tabs{display:flex;height:100%;gap:0}
+.tab{padding:0 14px;border:none;background:none;cursor:pointer;font-size:12px;font-weight:500;color:#64748b;border-bottom:2px solid transparent;height:100%;display:flex;align-items:center;gap:5px;white-space:nowrap;letter-spacing:.01em;transition:color .15s}
+.tab.on{color:var(--top-text);border-bottom-color:#3b82f6}
+.tab:hover:not(.on){color:#94a3b8}
+.cnt{font-size:10px;font-weight:700;background:rgba(255,255,255,.1);color:#94a3b8;padding:1px 6px;border-radius:20px}
+.tab.on .cnt{background:rgba(59,130,246,.25);color:#93c5fd}
+.sp{flex:1}
+
+/* ── Top buttons ── */
+.tbtn{padding:6px 13px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;letter-spacing:.01em;border:1px solid transparent;transition:all .15s;font-family:inherit}
+.tbtn-outline{background:transparent;border-color:rgba(255,255,255,.12);color:#94a3b8}
+.tbtn-outline:hover{border-color:rgba(255,255,255,.25);color:var(--top-text)}
+.tbtn-white{background:var(--top-text);color:var(--top);border-color:var(--top-text)}
+.tbtn-white:hover{background:#e2e8f0}
+.tbtn-purple{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.tbtn-purple:hover{background:#6d28d9}
+.tbtn-green{background:#059669;color:#fff;border-color:#059669}
+.tbtn-green:hover{background:#047857}
+.tbtn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── Content buttons ── */
+.btn{padding:6px 12px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--bg);color:var(--text);white-space:nowrap;display:inline-flex;align-items:center;gap:4px;font-family:inherit}
+.btn:hover{background:var(--bg3)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:var(--text);color:#fff;border-color:var(--text)}.btn-primary:hover{background:#374151}
+.btn-danger{color:var(--red);border-color:var(--red-border)}.btn-danger:hover{background:var(--red-bg)}
+.btn-sm{padding:4px 9px;font-size:11px}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--text2)}.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.ibt{background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:var(--r);font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.ibt:hover{color:var(--text);background:var(--bg3)}
+
+/* ── Export dropdown ── */
+.drop{position:relative;display:inline-flex}
+.drop-menu{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--sh3);z-index:200;min-width:210px;padding:5px 0;display:none}
+.drop-menu.open{display:block}
+.drop-item{display:flex;align-items:center;gap:9px;padding:8px 14px;font-size:12px;cursor:pointer;color:var(--text);font-weight:500}
+.drop-item:hover{background:var(--bg2)}
+.drop-item svg{color:var(--text3);flex-shrink:0;width:13px;height:13px}
+.drop-sep{height:1px;background:var(--border);margin:4px 0}
+.drop-label{padding:7px 14px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
+
+/* ── Filter bar ── */
+.fbar{background:var(--bg);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0}
+.srch{position:relative;display:flex;align-items:center}
+.srch-icon{position:absolute;left:9px;color:var(--text3);pointer-events:none;width:13px;height:13px}
+.srch input{padding:6px 10px 6px 30px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);outline:none;width:210px;font-family:inherit}
+.srch input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.fsel{padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--bg);color:var(--text);cursor:pointer;outline:none;font-family:inherit}
+.fsel:focus{border-color:var(--blue)}
+.chips{display:flex;gap:4px}
+.chip{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text2);letter-spacing:.01em;transition:all .12s}
+.chip.on{background:var(--text);color:#fff;border-color:var(--text)}
+.chip:hover:not(.on){background:var(--bg3);border-color:var(--border2)}
+
+/* ── Content ── */
+.content{flex:1;overflow-y:auto;padding:16px 20px}
+
+/* ── Stats row ── */
+.stats{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:10px 16px;display:flex;align-items:baseline;gap:7px;box-shadow:var(--sh)}
+.sn{font-size:20px;font-weight:700;letter-spacing:-.03em}
+.sl{font-size:11px;color:var(--text2);font-weight:500}
+
+/* ── Table ── */
+.tw{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh)}
+table{width:100%;border-collapse:collapse}
+th{background:var(--bg2);padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);white-space:nowrap;user-select:none}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:12px}
+tbody tr:not(.exp-row){cursor:pointer}
+tbody tr:not(.exp-row):hover td{background:#fafbfc}
+tr:last-child td{border-bottom:none}
+.exp-row td{padding:0;border-bottom:1px solid var(--border2)}
+.exp-row:last-child td{border-bottom:none}
+
+/* ── Badges ── */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.03em;white-space:nowrap;border:1px solid transparent}
+.b-cn{background:#dbeafe;color:#1e40af;border-color:#bfdbfe}
+.b-mx{background:#dcfce7;color:#14532d;border-color:#bbf7d0}
+.b-na{background:#fef3c7;color:#78350f;border-color:#fde68a}
+.b-ot{background:#f3e8ff;color:#581c87;border-color:#ddd6fe}
+.b-exploring{background:var(--bg3);color:var(--text2);border-color:var(--border2)}
+.b-active{background:var(--blue-bg);color:var(--blue2);border-color:var(--blue-border)}
+.b-ready{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.b-smart{background:var(--purple-bg);color:var(--purple);border-color:var(--purple-border)}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-h{background:#ef4444}.dot-m{background:#f59e0b}.dot-l{background:#d1d5db}
+
+/* ── Name cell ── */
+.nc strong{display:block;font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;color:var(--text)}
+.nc .role{font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;margin-top:1px}
+.nc .co{font-size:11px;color:var(--blue2);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+
+/* ── Tags ── */
+.tags{display:flex;flex-wrap:wrap;gap:3px;max-width:190px}
+.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;background:var(--bg3);color:var(--text2);max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.tag-n{background:var(--blue-bg);color:var(--blue2)}
+.desc-cell{font-size:11px;color:var(--text2);line-height:1.5;max-width:220px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* ── Contact icons ── */
+.ci-row{display:flex;gap:3px;flex-wrap:wrap}
+.ci{display:inline-flex;align-items:center;justify-content:center;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid transparent;white-space:nowrap;position:relative;letter-spacing:.02em}
+.ci:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:#1e293b;color:#f1f5f9;padding:4px 8px;border-radius:5px;font-size:10px;white-space:nowrap;pointer-events:none;z-index:60;font-weight:500;box-shadow:var(--sh2)}
+.ci-wc{background:#e6f9f1;color:#07c160;border-color:#a7f3d0}
+.ci-wa{background:#e9f7ee;color:#128c7e;border-color:#86efac}
+.ci-em{background:var(--blue-bg);color:var(--blue2);border-color:var(--blue-border)}
+.ci-ph{background:#eef2ff;color:#4f46e5;border-color:#c7d2fe}
+.ci-li{background:#e8f0f9;color:#0a66c2;border-color:#93c5fd}
+.ci-ot{background:var(--bg3);color:var(--text2);border-color:var(--border2)}
+.copied-flash{position:fixed;top:20px;right:20px;background:#1e293b;color:#f1f5f9;padding:8px 14px;border-radius:var(--r);font-size:12px;font-weight:500;z-index:999;pointer-events:none;box-shadow:var(--sh2)}
+
+/* ── Expanded row ── */
+.exp-panel{padding:16px 18px;background:#fafbfc;border-left:3px solid var(--blue)}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:14px}
+.exp-col-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:9px}
+.exp-field{display:flex;gap:8px;align-items:flex-start;margin-bottom:5px}
+.exp-lbl{color:var(--text3);width:68px;flex-shrink:0;font-size:11px;padding-top:1px;font-weight:500}
+.exp-val{color:var(--text);word-break:break-word;font-size:12px;font-weight:500}
+.ecb{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r);font-size:11px;font-weight:600;cursor:pointer;border:1px solid;margin:2px 2px 2px 0;transition:all .1s}
+.ecb:hover{filter:brightness(.95)}
+.ecb-wc{background:#e6f9f1;color:#07c160;border-color:#a7f3d0}
+.ecb-wa{background:#e9f7ee;color:#128c7e;border-color:#86efac}
+.ecb-em{background:var(--blue-bg);color:var(--blue2);border-color:var(--blue-border)}
+.ecb-ph{background:#eef2ff;color:#4f46e5;border-color:#c7d2fe}
+.ecb-li{background:#e8f0f9;color:#0a66c2;border-color:#93c5fd}
+.ecb-ot{background:var(--bg3);color:var(--text2);border-color:var(--border2)}
+.exp-desc{font-size:12px;color:var(--text2);line-height:1.6;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px}
+.exp-actions{display:flex;gap:7px;padding-top:10px;border-top:1px solid var(--border)}
+.offer-tag{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;margin:2px 2px 2px 0;background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);font-weight:500}
+.need-tag{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;margin:2px 2px 2px 0;background:var(--blue-bg);color:var(--blue2);border:1px solid var(--blue-border);font-weight:500}
+
+/* ── Score ── */
+.score{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}
+.sc-hi{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
+.sc-md{background:var(--amber-bg);color:var(--amber);border:1.5px solid var(--amber-border)}
+
+/* ── Match expanded ── */
+.mx-panel{padding:18px;background:#fafbff;border-left:3px solid var(--blue)}
+.mx-grid{display:grid;grid-template-columns:1fr 40px 1fr;gap:12px;margin-bottom:14px;align-items:start}
+.mx-side{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:14px;box-shadow:var(--sh)}
+.mx-side h5{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:9px}
+.mx-arrow{display:flex;align-items:center;justify-content:center;padding-top:32px;color:var(--text3);font-size:22px}
+.mx-reason{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:12px}
+.mx-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.intro-box{margin-top:12px;padding:12px 14px;background:#f0f7ff;border:1px solid var(--blue-border);border-radius:var(--r);font-size:12px;color:var(--text);line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.status-sel{font-size:11px;font-weight:600;padding:4px 8px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text2);cursor:pointer;font-family:inherit}
+
+/* ── Smart match ── */
+.sm-box{background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:1px solid var(--purple-border);border-radius:var(--r2);padding:16px;margin-bottom:16px}
+.sm-box label{font-size:11px;font-weight:700;color:var(--purple);display:block;margin-bottom:7px;text-transform:uppercase;letter-spacing:.06em}
+.sm-box textarea{width:100%;padding:10px 12px;border:1px solid #c4b5fd;border-radius:var(--r);font-size:13px;background:#fff;color:var(--text);font-family:inherit;outline:none;resize:vertical;min-height:90px;line-height:1.55}
+.sm-box textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.08)}
+.sm-card{border:1px solid var(--border);border-radius:var(--r2);padding:13px;margin-bottom:8px;border-left:3px solid var(--purple);background:#fdfcff;box-shadow:var(--sh)}
+.sm-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
+.sm-card-names{font-size:13px;font-weight:600}
+.sm-card-cos{font-size:11px;color:var(--text2);margin-top:2px}
+.sm-card-reason{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* ── Modal ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:48px 20px;overflow-y:auto;backdrop-filter:blur(2px)}
+.modal{background:#fff;border-radius:var(--r3);width:660px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.18);margin:auto;border:1px solid var(--border)}
+.modal-lg{width:740px}
+.mhd{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1}
+.mhd h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.mhd .sub{font-size:11px;color:var(--text2);margin-top:2px}
+.mbody{padding:18px 22px}
+.mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:#fff}
+
+/* ── Form ── */
+.fg{margin-bottom:13px}
+.fl{font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px;letter-spacing:.02em}
+.fi,.fs,.fta{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:#fff;color:var(--text);font-family:inherit;outline:none;transition:border-color .1s}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
+.fta{resize:vertical;line-height:1.55}
+.frow{display:flex;gap:12px}.frow .fg{flex:1}
+.fsec{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:12px 0 7px;border-top:1px solid var(--border);margin-top:6px}
+
+/* ── Upload zone ── */
+.upload-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.utab{flex:1;padding:8px;border:none;background:var(--bg3);cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);text-align:center;font-family:inherit;transition:all .1s}
+.utab.on{background:#fff;color:var(--text);box-shadow:inset 0 0 0 1px var(--border)}
+.utab:hover:not(.on){background:var(--bg4)}
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--r2);padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:10px}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--blue);background:var(--blue-bg)}
+.drop-zone h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px}
+.drop-zone p{font-size:11px;color:var(--text2)}
+.file-preview{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;font-size:12px}
+.file-preview .fn{font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-preview .fs2{color:var(--text2)}
+
+/* ── Parsed preview card ── */
+.pc{border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.pc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.pc-name strong{font-size:14px;font-weight:600}
+.pc-ctrls{display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0}
+.pc-ctrls select{font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--r);background:#fff;color:var(--text);font-family:inherit;font-weight:600}
+.pc-desc{font-size:11px;color:var(--text2);line-height:1.5;padding:7px 9px;background:var(--bg2);border-radius:var(--r);margin:6px 0}
+.pc-contacts{font-size:11px;color:var(--text2);margin-bottom:5px}
+
+/* ── Loading ── */
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:14px;background:var(--top)}
+.loading-brand{font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:700;letter-spacing:.04em;color:#f1f5f9;padding-bottom:5px;border-bottom:1.5px solid rgba(241,245,249,.35)}
+.loading-sub{font-size:12px;color:#64748b}
+.empty{text-align:center;padding:56px 20px;color:var(--text2)}
+.empty h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
+.empty p{font-size:12px;line-height:1.55}
+
+/* ── Toast / save indicator ── */
+.toast{position:fixed;bottom:22px;right:22px;background:#1e293b;color:#f1f5f9;padding:9px 16px;border-radius:var(--r);font-size:12px;font-weight:500;z-index:300;box-shadow:var(--sh3);display:none}
+.save-ind{position:fixed;bottom:22px;left:22px;background:var(--green-bg);border:1px solid var(--green-border);color:var(--green);padding:7px 13px;border-radius:var(--r);font-size:11px;font-weight:600;z-index:300;display:none;align-items:center;gap:5px}
+
+/* ── Spinner ── */
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:sp .55s linear infinite;vertical-align:middle}
+.spin-lg{width:22px;height:22px;border-width:2.5px;border-color:rgba(59,130,246,.2);border-top-color:var(--blue)}
+.spin-d{border-color:rgba(100,100,100,.15);border-top-color:var(--text2)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--text3);font-size:11px;font-weight:500}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.tip{font-size:10px;color:var(--text3);margin-top:4px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+<div id="save-ind" class="save-ind">&#10003; Saved</div>
+
+<script>
+'use strict';
+
+// ── Constants ──
+var REGIONS={china:{label:'China',short:'CN',cls:'b-cn',color:'#1e40af'},mexico:{label:'Mexico',short:'MX',cls:'b-mx',color:'#14532d'},north_america:{label:'N. America',short:'NA',cls:'b-na',color:'#78350f'},others:{label:'Others',short:'OT',cls:'b-ot',color:'#581c87'}};
+var STAGES={exploring:{label:'Exploring',cls:'b-exploring'},active:{label:'Active',cls:'b-active'},ready:{label:'Ready',cls:'b-ready'}};
+var PRIORITY={high:{label:'High',dot:'dot-h'},medium:{label:'Medium',dot:'dot-m'},low:{label:'Low',dot:'dot-l'}};
+var MATCH_ST={suggested:'Suggested',introduced:'Introduced',in_progress:'In Progress',closed:'Closed'};
+var CTYPES=['Manufacturer','Distributor','Importer','Exporter','Service Provider','Investor','Platform','Brand','Consultant','Media','Agency','Other'];
+var SECTORS=['Manufacturing','Logistics','Legal / Tax','Customs','E-commerce','Industrial Park','Distribution','Automotive','Electronics','Food & Beverage','Medical Devices','Energy / Solar','Consulting','Finance','Real Estate','Media & Content','Technology','Retail','Other'];
+var INTENTS=['Sell into market','Buy / Source','Find partners','Invest','Provide service','Explore / Research','Hire / Talent'];
+var RELATIONSHIPS=['New contact','In conversation','Active relationship','Strategic partner','Closed / Inactive'];
+var LANGUAGES=['Mandarin','English','Spanish','Portuguese','Bilingual CN-EN','Bilingual CN-ES','Other'];
+var MARKET_INTERESTS=['Mexico Entry','US / NA Market','China Sourcing','LATAM Expansion','Manufacturing Setup','E-commerce','Distribution','Logistics','USMCA / Compliance','Investment / M&A','Nearshoring'];
+var NEXT_ACTIONS=['Follow up','Send intro','Schedule meeting','Send proposal','Awaiting response','Nurturing','No action needed'];
+var BUDGETS=['Unknown','< $50K','$50K - $500K','$500K - $5M','$5M+'];
+var SCALES=['Unknown','Solo / Freelancer','Startup (< 20)','SME (20-200)','Mid-size (200-2000)','Large (2000+)'];
+var SOURCES=[
+  '— Chinese Platforms —','Douyin','Xiaohongshu (RED)','WeChat','WeChat Group','Weibo','Bilibili','Zhihu',
+  '— International Platforms —','LinkedIn','Twitter / X','Instagram','Facebook','TikTok','YouTube','WhatsApp Group','Telegram','Reddit',
+  '— Other —','Referral','Event / Conference','Cold Outreach','Email Campaign','Other'
+];
+
+var PARSE_SYS=`Extract ALL business contacts. Return ONLY valid JSON. SKIP anyone named Yang Xiang, 向阳, or Yang.
+
+Schema: {"contacts":[{
+  "name":"","title":"job title/role","company":"","companyType":"Manufacturer|Distributor|Importer|Exporter|Service Provider|Investor|Platform|Brand|Consultant|Media|Agency|Other",
+  "website":"","region":"china|mexico|north_america|others",
+  "sector":"Manufacturing|Logistics|Legal/Tax|Customs|E-commerce|Industrial Park|Distribution|Automotive|Electronics|Food & Beverage|Medical Devices|Energy/Solar|Consulting|Finance|Real Estate|Media & Content|Technology|Retail|Other",
+  "stage":"exploring|active|ready","priority":"high|medium|low",
+  "intent":"Sell into market|Buy/Source|Find partners|Invest|Provide service|Explore/Research|Hire/Talent",
+  "relationship":"New contact|In conversation|Active relationship|Strategic partner|Closed/Inactive",
+  "language":"Mandarin|English|Spanish|Portuguese|Bilingual CN-EN|Bilingual CN-ES|Other",
+  "marketInterest":["Mexico Entry|US/NA Market|China Sourcing|LATAM Expansion|Manufacturing Setup|E-commerce|Distribution|Logistics|USMCA/Compliance|Investment/M&A|Nearshoring"],
+  "nextAction":"Follow up|Send intro|Schedule meeting|Send proposal|Awaiting response|Nurturing|No action needed",
+  "wechat":"WeChat ID","whatsapp":"","email":"","phone":"","linkedin":"","otherContact":"",
+  "offers":["short phrases of what they provide"],"needs":["short phrases of what they want"],
+  "budget":"Unknown|< $50K|$50K - $500K|$500K - $5M|$5M+",
+  "scale":"Unknown|Solo/Freelancer|Startup (<20)|SME (20-200)|Mid-size (200-2000)|Large (2000+)",
+  "source":"Douyin|Xiaohongshu (RED)|WeChat|WeChat Group|Weibo|Bilibili|Zhihu|LinkedIn|Twitter/X|Instagram|Facebook|TikTok|YouTube|WhatsApp Group|Telegram|Reddit|Referral|Event/Conference|Cold Outreach|Other",
+  "description":"2-3 sentence summary: who they are, what they do, what they want"
+}]}
+
+Extract ALL contacts. Infer intent, relationship stage, and language from context. Be thorough with contact details.`;
+
+var MATCH_SYS=`Expert business matchmaker for cross-border trade (China, Mexico, N. America, others). Match ALL contacts — any direction works. Return ONLY JSON.
+{"matches":[{"idA":"","idB":"","score":8,"reason":"2-3 sentences: specific value this connection creates"}]}
+Score 1-10 (only 6+). Max 20. Sort by score descending. Consider: complementary offers/needs, sector fit, stage compatibility, budget alignment.`;
+
+var SMART_SYS=`Expert business matchmaker. Based on user's specific request, find BEST matches from ALL contacts. Return ONLY JSON.
+{"matches":[{"idA":"","idB":"","score":9,"reason":"2-3 sentences tied to user's specific request"}]}
+If anchor contact given, use as idA. Score 1-10 (only 6+). Max 8. Sort descending.`;
+
+// ── State ──
+var S={
+  authed:false,session:null,
+  contacts:[],matches:[],
+  tab:'contacts',
+  filters:{q:'',region:'all',sector:'all',stage:'all',priority:'all'},
+  mFilter:'all',
+  loading:true,loadError:'',
+  parsing:false,matching:false,smartMatching:false,genIntroId:null,
+  parsed:null,parseRaw:'',parseMode:'text',pendingFile:null,
+  editing:null,expanded:{},mExpanded:{},introText:{},smartResults:null,
+  exportOpen:false,
+};
+
+// ── Auth ──
+function loadSession(){
+  var raw=localStorage.getItem('ss-session');
+  if(!raw)return false;
+  try{var s=JSON.parse(raw);if(s.token&&s.expires>Date.now()){S.session=s.token;S.authed=true;return true}}catch(e){}
+  return false;
+}
+function storeSession(token){
+  var s={token:token,expires:Date.now()+30*24*3600*1000};
+  localStorage.setItem('ss-session',JSON.stringify(s));
+  S.session=token;S.authed=true;
+}
+
+// ── DB / API ──
+async function api(path,method,body){
+  var opts={method:method||'GET',headers:{'Content-Type':'application/json'}};
+  if(S.session&&S.session!=='open')opts.headers['Authorization']='Bearer '+S.session;
+  if(body)opts.body=JSON.stringify(body);
+  var res=await fetch('/api/'+path,opts);
+  if(!res.ok){var e=await res.json().catch(function(){return{error:res.statusText}});throw new Error(e.error||res.statusText)}
+  return res.json().catch(function(){return null});
+}
+
+async function callClaude(sys,userContent,maxTok){
+  var messages;
+  if(typeof userContent==='string'){messages=[{role:'user',content:userContent}];}
+  else{messages=[{role:'user',content:userContent}];}
+  var d=await api('claude','POST',{max_tokens:maxTok||1000,system:sys,messages:messages});
+  if(d.error)throw new Error(d.error.message||JSON.stringify(d.error));
+  var txt=(d.content||[]).filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join('');
+  txt=txt.replace(/```json|```/g,'').trim();
+  try{return JSON.parse(txt)}catch(e){
+    var s=txt.indexOf('{'),en=txt.lastIndexOf('}');
+    if(s!==-1&&en>s){try{return JSON.parse(txt.slice(s,en+1))}catch(e2){}}
+    throw new Error('Parse error');
+  }
+}
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+
+// ── Notifications ──
+var _tt;
+function toast(msg,dur){var el=document.getElementById('toast');if(!el)return;el.textContent=msg;el.style.display='block';clearTimeout(_tt);_tt=setTimeout(function(){el.style.display='none'},dur||2800)}
+var _si;
+function showSaved(){var el=document.getElementById('save-ind');if(!el)return;el.style.display='flex';clearTimeout(_si);_si=setTimeout(function(){el.style.display='none'},2200)}
+function flashCopied(text){
+  try{navigator.clipboard.writeText(text)}catch(e){}
+  var el=document.createElement('div');el.className='copied-flash';el.textContent='Copied: '+text.slice(0,38)+(text.length>38?'...':'');
+  document.body.appendChild(el);setTimeout(function(){el.remove()},1700);
+}
+
+// ── HTML helpers ──
+function h(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function hq(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function rb(r){var x=REGIONS[r]||{label:r,cls:''};return'<span class="badge '+x.cls+'">'+h(x.short||x.label)+'</span>'}
+function sb(st){var x=STAGES[st]||{label:st,cls:''};return'<span class="badge '+x.cls+'">'+h(x.label)+'</span>'}
+function pb(pr){var x=PRIORITY[pr]||PRIORITY.low;return'<span class="dot '+x.dot+'" style="margin-right:5px"></span>'}
+
+// ── Init ──
+async function init(){
+  if(loadSession()){await loadData();return}
+  // Try open access
+  try{
+    var r=await api('auth','POST',{password:''});
+    if(r.success){storeSession(r.token);await loadData();return}
+  }catch(e){}
+  S.loading=false;S.authed=false;renderAuth();
+}
+
+async function loadData(){
+  S.loading=true;renderLoading();
+  try{
+    var results=await Promise.all([api('contacts'),api('matches')]);
+    S.contacts=results[0]||[];S.matches=results[1]||[];
+    S.loading=false;checkMigration();render();
+  }catch(e){S.loadError=e.message;S.loading=false;renderError()}
+}
+
+function checkMigration(){
+  var oldK=['gw4-c','gw3-c','gwcrm2-c','gateway-crm-contacts'];
+  for(var i=0;i<oldK.length;i++){
+    var raw=localStorage.getItem(oldK[i]);
+    if(raw&&S.contacts.length===0){
+      try{
+        var old=JSON.parse(raw);
+        if(old&&old.length>0&&confirm('Found '+old.length+' contacts from a previous version. Import them now?')){
+          importOldData(old);return;
+        }
+      }catch(e){}
+    }
+  }
+}
+
+async function importOldData(contacts){
+  toast('Importing '+contacts.length+' contacts...',5000);
+  try{
+    await api('contacts','POST',{action:'import',contacts:contacts});
+    var mRaw=localStorage.getItem('gw4-m')||localStorage.getItem('gw3-m');
+    if(mRaw){var ms=JSON.parse(mRaw);if(ms&&ms.length)await api('matches','POST',{action:'import',matches:ms})}
+    var res=await Promise.all([api('contacts'),api('matches')]);
+    S.contacts=res[0]||[];S.matches=res[1]||[];render();toast('Import complete!');
+  }catch(e){toast('Import error: '+e.message)}
+}
+
+// ── Auth render ──
+function renderAuth(){
+  document.getElementById('app').innerHTML='<div class="auth-screen"><div class="auth-card">'
+    +'<div class="auth-logo">SynerSage</div>'
+    +'<p class="auth-tagline">China &middot; Mexico &middot; North America Business Network</p>'
+    +'<label class="auth-label">Password</label>'
+    +'<input class="auth-input" id="auth-pw" type="password" placeholder="Enter access password" onkeydown="if(event.key===\'Enter\')doLogin()"/>'
+    +'<button class="auth-btn" onclick="doLogin()">Access CRM</button>'
+    +'<div id="auth-err" class="auth-error"></div>'
+    +'</div></div>';
+  setTimeout(function(){var e=document.getElementById('auth-pw');if(e)e.focus()},80);
+}
+
+async function doLogin(){
+  var pw=(document.getElementById('auth-pw')||{}).value||'';
+  var btn=document.querySelector('.auth-btn');
+  if(btn){btn.disabled=true;btn.textContent='Verifying...'}
+  try{
+    var r=await api('auth','POST',{password:pw});
+    if(r.success){storeSession(r.token);await loadData()}
+    else{showAuthErr('Incorrect password')}
+  }catch(e){
+    if(e.message.includes('401')||e.message.toLowerCase().includes('incorrect')){showAuthErr('Incorrect password')}
+    else{showAuthErr(e.message)}
+  }
+  if(btn){btn.disabled=false;btn.textContent='Access CRM'}
+}
+
+function showAuthErr(msg){var e=document.getElementById('auth-err');if(e)e.textContent=msg}
+
+// ── Loading / Error ──
+function renderLoading(){
+  document.getElementById('app').innerHTML='<div class="loading-screen">'
+    +'<div class="loading-brand">SynerSage</div>'
+    +'<div style="display:flex;align-items:center;gap:8px"><span class="spin spin-lg"></span></div>'
+    +'<div class="loading-sub">Loading your network...</div>'
+    +'</div>';
+}
+function renderError(){
+  document.getElementById('app').innerHTML='<div class="loading-screen">'
+    +'<div class="loading-brand">SynerSage</div>'
+    +'<p style="font-size:12px;color:#64748b;max-width:320px;text-align:center;margin-top:12px">'+h(S.loadError)+'<br><br>Check environment variables: SUPABASE_URL, SUPABASE_SERVICE_KEY, ANTHROPIC_API_KEY</p>'
+    +'<button class="auth-btn" style="max-width:200px;margin-top:20px" onclick="location.reload()">Retry</button>'
+    +'</div>';
+}
+
+// ── Main render ──
+function render(){
+  if(S.loading){renderLoading();return}
+  if(S.loadError){renderError();return}
+  if(!S.authed){renderAuth();return}
+  renderApp();
+}
+
+function renderApp(){
+  var activeM=S.matches.filter(function(m){return m.status!=='closed'}).length;
+  document.getElementById('app').innerHTML='<div class="app">'
+    +'<div class="topbar">'
+    +'<div class="brand">SynerSage</div>'
+    +'<div class="topbar-sep"></div>'
+    +'<div class="tabs">'
+    +'<button class="tab '+(S.tab==='contacts'?'on':'')+'" onclick="setTab(\'contacts\')">Contacts <span class="cnt">'+S.contacts.length+'</span></button>'
+    +'<button class="tab '+(S.tab==='matches'?'on':'')+'" onclick="setTab(\'matches\')">Matches <span class="cnt">'+activeM+'</span></button>'
+    +'</div>'
+    +'<div class="sp"></div>'
+    +'<button class="tbtn tbtn-outline" onclick="openAdd()">+ Add Contact</button>'
+    +'<button class="tbtn tbtn-purple" onclick="openSmartMatch()">&#10024; Smart Match</button>'
+    +'<button class="tbtn tbtn-white" id="mbtn" onclick="startMatch()" '+(S.matching?'disabled':'')+'>'+(S.matching?'<span class="spin"></span> Matching...':'&#9965; Run Matchmaking')+'</button>'
+    +'<div class="drop" id="exp-drop">'
+    +'<button class="tbtn tbtn-green" onclick="toggleDropMenu()">&#8595; Export</button>'
+    +'<div class="drop-menu" id="exp-menu">'
+    +'<div class="drop-label">Download</div>'
+    +'<div class="drop-item" onclick="downloadExcel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Excel (.xlsx) — All data</div>'
+    +'<div class="drop-item" onclick="downloadJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Full Backup (JSON)</div>'
+    +'<div class="drop-sep"></div>'
+    +'<div class="drop-label">Import</div>'
+    +'<div class="drop-item" onclick="triggerImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Restore from JSON</div>'
+    +'<input type="file" id="import-file" accept=".json" style="display:none" onchange="restoreJSON(this)"/>'
+    +'<div class="drop-sep"></div>'
+    +'<div class="drop-item" onclick="doLogout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</div>'
+    +'</div></div>'
+    +'</div>'
+    +'<div class="fbar" id="fbar"></div>'
+    +'<div class="content" id="content"></div>'
+    +'</div>'
+    +'<div class="overlay" id="overlay" style="display:none" onclick="overlayClick(event)"></div>';
+  renderFilters();renderContent();
+}
+
+function doLogout(){localStorage.removeItem('ss-session');S.authed=false;S.session=null;renderAuth()}
+
+// ── Filters ──
+function renderFilters(){
+  var fb=document.getElementById('fbar');if(!fb)return;
+  if(S.tab==='contacts'){
+    var rChips=['all','china','mexico','north_america','others'].map(function(r){var l=r==='all'?'All':REGIONS[r]?REGIONS[r].label:r;return'<button class="chip '+(S.filters.region===r?'on':'')+'" onclick="setF(\'region\',\''+r+'\')">'+l+'</button>'}).join('');
+    var stChips=['all','exploring','active','ready'].map(function(s){var l=s==='all'?'All Stages':STAGES[s].label;return'<button class="chip '+(S.filters.stage===s?'on':'')+'" onclick="setF(\'stage\',\''+s+'\')">'+l+'</button>'}).join('');
+    var prChips=['all','high','medium','low'].map(function(p){var l=p==='all'?'All Priority':PRIORITY[p]?PRIORITY[p].label:p;return'<button class="chip '+(S.filters.priority===p?'on':'')+'" onclick="setF(\'priority\',\''+p+'\')">'+l+'</button>'}).join('');
+    var secOpts=SECTORS.map(function(s){return'<option value="'+hq(s)+'" '+(S.filters.sector===s?'selected':'')+'>'+h(s)+'</option>'}).join('');
+    fb.innerHTML='<div class="srch"><svg class="srch-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="4.5"/><path d="m10 10 3 3"/></svg><input type="text" placeholder="Search name, company, WeChat, email..." value="'+hq(S.filters.q)+'" oninput="setF(\'q\',this.value)"/></div>'
+      +'<div class="chips">'+rChips+'</div>'
+      +'<select class="fsel" onchange="setF(\'sector\',this.value)"><option value="all" '+(S.filters.sector==='all'?'selected':'')+'>All Sectors</option>'+secOpts+'</select>'
+      +'<div class="chips">'+stChips+'</div>'
+      +'<div class="chips">'+prChips+'</div>'
+      +'<button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="clearF()">Clear filters</button>';
+  } else {
+    fb.innerHTML='<div class="chips">'+['all','suggested','introduced','in_progress','closed'].map(function(s){var l=s==='all'?'All':s==='in_progress'?'In Progress':s.charAt(0).toUpperCase()+s.slice(1);return'<button class="chip '+(S.mFilter===s?'on':'')+'" onclick="setMF(\''+s+'\')">'+l+'</button>'}).join('')+'</div>';
+  }
+}
+
+function filteredC(){
+  return S.contacts.filter(function(c){
+    var q=S.filters.q.toLowerCase();
+    if(q&&![c.name,c.company,c.title,c.wechat,c.whatsapp,c.email,c.phone,c.description,c.intent,(c.marketInterest||[]).join(' ')].join(' ').toLowerCase().includes(q))return false;
+    if(S.filters.region!=='all'&&c.region!==S.filters.region)return false;
+    if(S.filters.sector!=='all'&&c.sector!==S.filters.sector)return false;
+    if(S.filters.stage!=='all'&&c.stage!==S.filters.stage)return false;
+    if(S.filters.priority!=='all'&&(c.priority||'low')!==S.filters.priority)return false;
+    return true;
+  });
+}
+
+function renderContent(){var ct=document.getElementById('content');if(!ct)return;if(S.tab==='contacts')renderContacts(ct);else renderMatches(ct)}
+
+// ── Contacts ──
+function count(r){return S.contacts.filter(function(c){return c.region===r}).length}
+
+function renderContacts(ct){
+  var cs=filteredC();
+  var stats='<div class="stats">'
+    +'<div class="stat"><span class="sn">'+S.contacts.length+'</span><span class="sl">Total</span></div>'
+    +'<div class="stat"><span class="sn" style="color:#1e40af">'+count('china')+'</span><span class="sl">China</span></div>'
+    +'<div class="stat"><span class="sn" style="color:#14532d">'+count('mexico')+'</span><span class="sl">Mexico</span></div>'
+    +'<div class="stat"><span class="sn" style="color:#78350f">'+count('north_america')+'</span><span class="sl">N. America</span></div>'
+    +'<div class="stat"><span class="sn" style="color:#581c87">'+count('others')+'</span><span class="sl">Others</span></div>'
+    +'<div class="stat"><span class="sn" style="color:#dc2626">'+S.contacts.filter(function(c){return c.priority==='high'}).length+'</span><span class="sl">High Priority</span></div>'
+    +'<div class="stat"><span class="sn" style="color:#15803d">'+S.contacts.filter(function(c){return c.stage==='ready'}).length+'</span><span class="sl">Ready</span></div>'
+    +'</div>';
+  if(!cs.length){ct.innerHTML=stats+'<div class="tw"><div class="empty"><h3>'+(S.contacts.length?'No results':'No contacts yet')+'</h3><p>'+(S.contacts.length?'Try adjusting filters.':'Click "+ Add Contact" to start building your network.')+'</p></div></div>';return}
+  var rows=cs.map(function(c){return contactRow(c)+expandedRow(c)}).join('');
+  ct.innerHTML=stats+'<div class="tw"><table><thead><tr>'
+    +'<th style="width:16%">Name &amp; Company</th>'
+    +'<th style="width:7%">Region</th>'
+    +'<th style="width:8%">Sector</th>'
+    +'<th style="width:7%">Stage</th>'
+    +'<th style="width:17%">Contact Info</th>'
+    +'<th style="width:10%">Intent / Focus</th>'
+    +'<th style="width:18%">Description</th>'
+    +'<th style="width:11%">Offers / Needs</th>'
+    +'<th style="width:6%"></th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+function contactRow(c){
+  var exp=S.expanded[c.id];
+  var mCnt=S.matches.filter(function(m){return m.idA===c.id||m.idB===c.id}).length;
+  var offers=(c.offers||[]).slice(0,2).map(function(o){return'<span class="tag">'+h(o)+'</span>'}).join('');
+  var needs=(c.needs||[]).slice(0,2).map(function(n){return'<span class="tag tag-n">'+h(n)+'</span>'}).join('');
+  var intentBadge=c.intent?'<span style="font-size:10px;color:var(--text2)">'+h(c.intent)+'</span>':'';
+  var miBadges=(c.marketInterest||[]).slice(0,2).map(function(m){return'<span style="font-size:10px;display:block;color:var(--blue2);font-weight:500">'+h(m)+'</span>'}).join('');
+  return'<tr onclick="toggleExp(\''+hq(c.id)+'\')">'
+    +'<td><div class="nc">'+pb(c.priority||'low')+'<strong>'+h(c.name||'')+'</strong><div class="role">'+h(c.title||'')+'</div><div class="co">'+h(c.company||'')+'</div></div></td>'
+    +'<td>'+rb(c.region)+'</td>'
+    +'<td style="font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px">'+h(c.sector||'')+'</td>'
+    +'<td>'+sb(c.stage)+'</td>'
+    +'<td><div class="ci-row">'+contactIcons(c)+'</div></td>'
+    +'<td style="max-width:110px">'+intentBadge+miBadges+'</td>'
+    +'<td><div class="desc-cell">'+h(c.description||'')+'</div></td>'
+    +'<td><div class="tags">'+offers+needs+'</div></td>'
+    +'<td style="white-space:nowrap">'+(mCnt?'<span style="font-size:10px;color:var(--text3);margin-right:3px">'+mCnt+'m</span>':'')
+    +'<button class="ibt" onclick="event.stopPropagation();editC(\''+hq(c.id)+'\')" title="Edit">&#9998;</button>'
+    +'<button class="ibt" onclick="event.stopPropagation();delC(\''+hq(c.id)+'\')" title="Delete">&#215;</button>'
+    +'<span style="color:var(--text3);font-size:10px;margin-left:1px">'+(exp?'&#9650;':'&#9660;')+'</span></td>'
+    +'</tr>';
+}
+
+function contactIcons(c){
+  var out='';
+  if(c.wechat)out+='<span class="ci ci-wc" data-tip="'+hq(c.wechat)+'" onclick="event.stopPropagation();flashCopied(\''+hq(c.wechat)+'\')">W</span>';
+  if(c.whatsapp)out+='<span class="ci ci-wa" data-tip="'+hq(c.whatsapp)+'" onclick="event.stopPropagation();flashCopied(\''+hq(c.whatsapp)+'\')">WA</span>';
+  if(c.email)out+='<span class="ci ci-em" data-tip="'+hq(c.email)+'" onclick="event.stopPropagation();flashCopied(\''+hq(c.email)+'\')" style="max-width:120px;overflow:hidden;text-overflow:ellipsis">@</span>';
+  if(c.phone)out+='<span class="ci ci-ph" data-tip="'+hq(c.phone)+'" onclick="event.stopPropagation();flashCopied(\''+hq(c.phone)+'\')">Tel</span>';
+  if(c.linkedin)out+='<span class="ci ci-li" data-tip="LinkedIn" onclick="event.stopPropagation();flashCopied(\''+hq(c.linkedin)+'\')">in</span>';
+  if(c.otherContact)out+='<span class="ci ci-ot" data-tip="'+hq(c.otherContact)+'" onclick="event.stopPropagation();flashCopied(\''+hq(c.otherContact)+'\')">+</span>';
+  return out||'<span style="font-size:10px;color:var(--text3)">—</span>';
+}
+
+function expandedRow(c){
+  if(!S.expanded[c.id])return'<tr class="exp-row" id="exp-'+c.id+'"><td colspan="9" style="padding:0;display:none"></td></tr>';
+  var mCnt=S.matches.filter(function(m){return m.idA===c.id||m.idB===c.id}).length;
+  function ecb(cls,label,val){if(!val)return'';return'<button class="ecb '+cls+'" onclick="flashCopied(\''+hq(val)+'\')" title="'+hq(val)+'">'+label+': '+h(val.length>30?val.slice(0,30)+'...':val)+'</button>'}
+  var offers=(c.offers||[]).map(function(o){return'<span class="offer-tag">'+h(o)+'</span>'}).join('');
+  var needs=(c.needs||[]).map(function(n){return'<span class="need-tag">'+h(n)+'</span>'}).join('');
+  var mi=Array.isArray(c.marketInterest)?c.marketInterest:(c.marketInterest?[c.marketInterest]:[]);
+  return'<tr class="exp-row" id="exp-'+hq(c.id)+'"><td colspan="9"><div class="exp-panel">'
+    +(c.description?'<div class="exp-desc">'+h(c.description)+'</div>':'')
+    +'<div class="exp-grid">'
+    +'<div><div class="exp-col-title">Contact Details</div><div style="line-height:1.9">'
+    +ecb('ecb-wc','WeChat',c.wechat)+ecb('ecb-wa','WhatsApp',c.whatsapp)+ecb('ecb-em','Email',c.email)
+    +ecb('ecb-ph','Phone',c.phone)+ecb('ecb-li','LinkedIn',c.linkedin)+ecb('ecb-ot','Other',c.otherContact)
+    +(c.website?'<div style="font-size:11px;color:var(--text2);margin-top:4px">Web: <a href="'+hq(c.website)+'" target="_blank" style="color:var(--blue)">'+h(c.website)+'</a></div>':'')
+    +'</div></div>'
+    +'<div><div class="exp-col-title">Classification</div>'
+    +'<div class="exp-field"><span class="exp-lbl">Intent</span><span class="exp-val">'+h(c.intent||'—')+'</span></div>'
+    +'<div class="exp-field"><span class="exp-lbl">Relation</span><span class="exp-val">'+h(c.relationship||'—')+'</span></div>'
+    +'<div class="exp-field"><span class="exp-lbl">Language</span><span class="exp-val">'+h(c.language||'—')+'</span></div>'
+    +'<div class="exp-field"><span class="exp-lbl">Markets</span><span class="exp-val">'+h(mi.join(', ')||'—')+'</span></div>'
+    +'<div class="exp-field"><span class="exp-lbl">Next</span><span class="exp-val">'+h(c.nextAction||'—')+'</span></div>'
+    +'</div>'
+    +'<div><div class="exp-col-title">Business Profile</div>'
+    +'<div class="exp-field"><span class="exp-lbl">Type</span><span class="exp-val">'+h(c.companyType||'—')+'</span></div>'
+    +'<div class="exp-field"><span class="exp-lbl">Budget</span><span class="exp-val">'+h(c.budget||'Unknown')+'</span></div>'
+    +'<div class="exp-field"><span class="exp-lbl">Scale</span><span class="exp-val">'+h(c.scale||'Unknown')+'</span></div>'
+    +'<div class="exp-field"><span class="exp-lbl">Source</span><span class="exp-val">'+h(c.source||'—')+'</span></div>'
+    +'<div class="exp-field"><span class="exp-lbl">Added</span><span class="exp-val">'+h(c.dateAdded||'—')+'</span></div>'
+    +(mCnt?'<div class="exp-field"><span class="exp-lbl">Matches</span><span class="exp-val"><button class="btn btn-ghost btn-sm" onclick="setTab(\'matches\')">'+mCnt+'</button></span></div>':'')
+    +'</div>'
+    +'</div>'
+    +'<div style="margin-bottom:10px">'
+    +(offers?'<div style="margin-bottom:6px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:4px">Offers</div>'+offers+'</div>':'')
+    +(needs?'<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:4px">Needs</div>'+needs+'</div>':'')
+    +'</div>'
+    +'<div class="exp-actions"><button class="btn btn-sm" onclick="editC(\''+hq(c.id)+'\')">Edit</button><button class="btn btn-sm btn-danger" onclick="delC(\''+hq(c.id)+'\')">Delete</button></div>'
+    +'</div></td></tr>';
+}
+
+function toggleExp(id){
+  S.expanded[id]=!S.expanded[id];
+  var row=document.getElementById('exp-'+id);
+  if(row){var td=row.querySelector('td');if(td)td.style.display=S.expanded[id]?'':'none'}
+  // Re-render the trigger row to update arrow
+  renderContent();
+}
+
+// ── Matches ──
+function renderMatches(ct){
+  var ms=S.matches.filter(function(m){return S.mFilter==='all'||m.status===S.mFilter}).sort(function(a,b){return(b.score||0)-(a.score||0)});
+  if(!S.matches.length){ct.innerHTML='<div class="tw"><div class="empty"><h3>No matches yet</h3><p>Use Smart Match for targeted introductions, or Run Matchmaking for automatic discovery across all contacts.</p></div></div>';return}
+  if(!ms.length){ct.innerHTML='<div class="tw"><div class="empty"><h3>No matches for this filter.</h3></div></div>';return}
+  var rows=ms.map(function(m){return matchRow(m)+matchExpRow(m)}).join('');
+  ct.innerHTML='<div class="tw"><table><thead><tr>'
+    +'<th style="width:40px">Score</th>'
+    +'<th style="width:22%">Contact A</th>'
+    +'<th style="width:22%">Contact B</th>'
+    +'<th style="width:27%">Why this match</th>'
+    +'<th style="width:10%">Status</th>'
+    +'<th style="width:7%"></th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+function matchRow(m){
+  var cA=S.contacts.find(function(c){return c.id===m.idA});
+  var cB=S.contacts.find(function(c){return c.id===m.idB});
+  if(!cA||!cB)return'';
+  var sc=m.score>=8?'sc-hi':'sc-md';
+  var stOpts=Object.keys(MATCH_ST).map(function(k){return'<option value="'+k+'" '+(m.status===k?'selected':'')+'>'+MATCH_ST[k]+'</option>'}).join('');
+  function mp(c){
+    var ct2=[c.wechat?'W:'+c.wechat:'',c.whatsapp?'WA:'+c.whatsapp:'',c.email||''].filter(Boolean).slice(0,1).join('');
+    return'<div><div style="font-weight:600;font-size:12px;display:flex;align-items:center;gap:5px">'+rb(c.region)+' '+h(c.name||c.company||'')+(m.isSmartMatch&&c.id===m.idA?'<span class="badge b-smart" style="font-size:9px">Smart</span>':'')+'</div>'
+      +'<div style="font-size:11px;color:var(--text2)">'+h(c.company||'')+(c.title?' &middot; '+h(c.title):'')+'</div>'
+      +(ct2?'<div style="font-size:10px;color:var(--text3)">'+h(ct2)+'</div>':'')+'</div>';
+  }
+  return'<tr onclick="toggleMExp(\''+hq(m.id)+'\')">'
+    +'<td style="padding-left:13px"><div class="score '+sc+'">'+m.score+'</div></td>'
+    +'<td>'+mp(cA)+'</td><td>'+mp(cB)+'</td>'
+    +'<td style="font-size:11px;color:var(--text2);line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:220px">'+h(m.reason||'')+'</td>'
+    +'<td><select class="status-sel" onchange="event.stopPropagation();updMStatus(\''+hq(m.id)+'\',this.value)">'+stOpts+'</select></td>'
+    +'<td><button class="ibt" onclick="event.stopPropagation();delM(\''+hq(m.id)+'\')" title="Remove">&#215;</button><span style="color:var(--text3);font-size:10px;margin-left:1px">'+(S.mExpanded[m.id]?'&#9650;':'&#9660;')+'</span></td>'
+    +'</tr>';
+}
+
+function matchExpRow(m){
+  if(!S.mExpanded[m.id])return'<tr class="exp-row" id="mexp-'+m.id+'"><td colspan="6" style="display:none"></td></tr>';
+  var cA=S.contacts.find(function(c){return c.id===m.idA});
+  var cB=S.contacts.find(function(c){return c.id===m.idB});
+  if(!cA||!cB)return'';
+  function sHtml(c){
+    var rg=REGIONS[c.region]||{label:c.region||'',cls:'',short:''};
+    function ctLine(label,val,color){if(!val)return'';return'<div style="display:flex;gap:5px;align-items:center;margin:3px 0"><span style="font-size:10px;color:var(--text3);width:55px;flex-shrink:0;font-weight:600">'+label+'</span><button style="font-size:11px;padding:2px 8px;border-radius:4px;background:'+color+';color:#fff;border:none;cursor:pointer;font-weight:600;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" onclick="flashCopied(\''+hq(val)+'\')" title="'+hq(val)+'">'+h(val.length>22?val.slice(0,22)+'...':val)+'</button></div>'}
+    return'<div class="mx-side"><h5><span class="badge '+rg.cls+'" style="margin-right:5px">'+rg.short+'</span>'+h(c.name||'')+'</h5>'
+      +'<div style="font-size:12px;font-weight:700;margin-bottom:2px">'+h(c.company||'')+'</div>'
+      +(c.title?'<div style="font-size:11px;color:var(--text2);margin-bottom:10px">'+h(c.title)+'</div>':'')
+      +ctLine('WeChat',c.wechat,'#07c160')+ctLine('WhatsApp',c.whatsapp,'#25d366')
+      +ctLine('Email',c.email,'#2563eb')+ctLine('Phone',c.phone,'#4f46e5')
+      +ctLine('LinkedIn',c.linkedin,'#0a66c2')+ctLine('Other',c.otherContact,'#64748b')
+      +(c.intent?'<div style="font-size:10px;color:var(--text3);margin-top:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Intent</div><div style="font-size:11px;margin-top:2px">'+h(c.intent)+'</div>':'')
+      +(c.budget&&c.budget!=='Unknown'?'<div style="font-size:10px;color:var(--text3);margin-top:6px">Budget: '+h(c.budget)+'</div>':'')
+      +(c.offers&&c.offers.length?'<div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:9px;margin-bottom:3px">Offers</div><div>'+(c.offers||[]).map(function(o){return'<span class="offer-tag">'+h(o)+'</span>'}).join('')+'</div>':'')
+      +(c.needs&&c.needs.length?'<div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:6px;margin-bottom:3px">Needs</div><div>'+(c.needs||[]).map(function(n){return'<span class="need-tag">'+h(n)+'</span>'}).join('')+'</div>':'')
+      +'</div>';
+  }
+  var intro=S.introText[m.id]||'';
+  return'<tr class="exp-row" id="mexp-'+hq(m.id)+'"><td colspan="6"><div class="mx-panel">'
+    +'<div class="mx-grid">'+sHtml(cA)+'<div class="mx-arrow">&#8594;</div>'+sHtml(cB)+'</div>'
+    +'<div class="mx-reason"><strong>Why introduce:</strong> '+h(m.reason||'')+'</div>'
+    +(intro?'<div class="intro-box">'+h(intro)+'</div><button class="btn btn-sm" style="margin-top:8px" onclick="flashCopied(\''+hq(intro)+'\')">Copy message</button>':'')
+    +'<div class="mx-actions" style="margin-top:12px">'
+    +'<button class="btn btn-primary btn-sm" onclick="genIntro(\''+hq(m.id)+'\')" '+(S.genIntroId===m.id?'disabled':'')+'>'+(S.genIntroId===m.id?'<span class="spin"></span> Generating...':'Generate intro message')+'</button>'
+    +'<button class="btn btn-sm btn-danger" onclick="delM(\''+hq(m.id)+'\')">Remove match</button>'
+    +'</div></div></td></tr>';
+}
+
+function toggleMExp(id){
+  S.mExpanded[id]=!S.mExpanded[id];
+  var row=document.getElementById('mexp-'+id);
+  if(row){var td=row.querySelector('td');if(td)td.style.display=S.mExpanded[id]?'':'none'}
+  renderContent();
+}
+
+async function genIntro(matchId){
+  var m=S.matches.find(function(x){return x.id===matchId});if(!m)return;
+  var cA=S.contacts.find(function(c){return c.id===m.idA});
+  var cB=S.contacts.find(function(c){return c.id===m.idB});
+  if(!cA||!cB)return;
+  S.genIntroId=matchId;renderContent();
+  try{
+    var sys='Write a short professional introduction message for a business connector introducing two parties. Write in English. If one party is Chinese (region=china), also add a Chinese (Mandarin) version below. Keep concise — 3-4 sentences max per version. Be specific about why they should connect.';
+    var user='A: '+cA.name+', '+(cA.title||'')+(cA.company?' at '+cA.company:'')+' ('+cA.region+'). Offers: '+(cA.offers||[]).join(', ')+'. Needs: '+(cA.needs||[]).join(', ')+'.\nB: '+cB.name+', '+(cB.title||'')+(cB.company?' at '+cB.company:'')+' ('+cB.region+'). Offers: '+(cB.offers||[]).join(', ')+'. Needs: '+(cB.needs||[]).join(', ')+'.\nReason: '+m.reason+'\nA contact: '+(cA.wechat||cA.whatsapp||cA.email||'n/a')+'\nB contact: '+(cB.wechat||cB.whatsapp||cB.email||'n/a');
+    var r=await api('claude','POST',{max_tokens:500,system:sys,messages:[{role:'user',content:user}]});
+    if(r.error)throw new Error(r.error.message||JSON.stringify(r.error));
+    S.introText[matchId]=(r.content||[]).filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join('').trim();
+  }catch(e){toast('Error: '+e.message)}
+  S.genIntroId=null;renderContent();
+}
+
+// ── Smart Match ──
+function openSmartMatch(){
+  var opts=S.contacts.map(function(c){return'<option value="'+hq(c.id)+'">'+h((c.name||c.company||'?')+' — '+(REGIONS[c.region]?REGIONS[c.region].label:c.region)+' — '+(c.company||''))+'</option>'}).join('');
+  showModal('<div class="modal modal-lg" onclick="event.stopPropagation()">'
+    +'<div class="mhd"><h2>&#10024; Smart Match</h2><div class="sub">Describe exactly what you need — AI finds the best connections</div><button class="ibt" onclick="closeModal()" style="font-size:18px">&#215;</button></div>'
+    +'<div class="mbody">'
+    +'<div class="sm-box"><label>What are you trying to accomplish?</label>'
+    +'<textarea id="sm-prompt" placeholder="Examples:&#10;• Find the best Mexico customs broker for Wang Wei who imports electronics&#10;• Match US distributors to Chinese auto parts factories with $500K+ budgets&#10;• Who in my network can help set up a company in Monterrey?&#10;• Find contacts for USMCA compliance in automotive&#10;• Connect Mexican industrial parks with Chinese EV manufacturers ready to move"></textarea></div>'
+    +'<div style="display:flex;gap:12px;align-items:flex-end;margin-bottom:14px">'
+    +'<div class="fg" style="flex:1;margin:0"><label class="fl">Anchor to a specific contact (optional)</label>'
+    +'<select class="fs" id="sm-anchor"><option value="">— Search across all contacts —</option>'+opts+'</select>'
+    +'<p class="tip">If selected, AI will find the best matches specifically FOR this person</p></div>'
+    +'<button class="btn btn-primary" id="sm-btn" onclick="runSmartMatch()" style="height:34px;flex-shrink:0">&#10024; Find Matches</button>'
+    +'</div>'
+    +'<div id="sm-results"></div>'
+    +'</div></div>');
+  setTimeout(function(){var ta=document.getElementById('sm-prompt');if(ta)ta.focus()},80);
+}
+
+async function runSmartMatch(){
+  var prompt=(document.getElementById('sm-prompt')||{}).value||'';
+  var anchorId=(document.getElementById('sm-anchor')||{}).value||'';
+  if(!prompt.trim()){toast('Describe what you\'re looking for first.');return}
+  if(S.contacts.length<2){toast('Need at least 2 contacts to match.');return}
+  var btn=document.getElementById('sm-btn');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin spin-d"></span> Thinking...'}
+  var res=document.getElementById('sm-results');
+  if(res)res.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-size:12px;display:flex;align-items:center;justify-content:center;gap:8px"><span class="spin spin-d"></span> Analyzing your contacts...</div>';
+  try{
+    var anchor=anchorId?S.contacts.find(function(c){return c.id===anchorId}):null;
+    var slim=S.contacts.map(function(c){return{id:c.id,name:c.name,title:c.title,company:c.company,companyType:c.companyType,region:c.region,sector:c.sector,offers:c.offers,needs:c.needs,stage:c.stage,priority:c.priority,budget:c.budget,intent:c.intent,marketInterest:c.marketInterest,description:c.description}});
+    var userMsg='User request: "'+prompt+'"';
+    if(anchor)userMsg+='\n\nAnchor (find matches FOR this person):\n'+JSON.stringify({id:anchor.id,name:anchor.name,company:anchor.company,region:anchor.region,sector:anchor.sector,offers:anchor.offers,needs:anchor.needs,intent:anchor.intent});
+    userMsg+='\n\nAll contacts:\n'+JSON.stringify(slim);
+    var r=await callClaude(SMART_SYS,userMsg,1200);
+    var newMatches=(r.matches||[]).map(function(m){return Object.assign({},m,{id:uid(),status:'suggested',date:new Date().toISOString().slice(0,10),isSmartMatch:true,smartPrompt:prompt})});
+    S.smartResults=newMatches;
+    if(!newMatches.length){
+      if(res)res.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-size:12px">No strong matches found for your criteria. Try rephrasing.</div>';
+    } else {
+      var cards=newMatches.map(function(m,i){
+        var cA=S.contacts.find(function(c){return c.id===m.idA});
+        var cB=S.contacts.find(function(c){return c.id===m.idB});
+        if(!cA||!cB)return'';
+        var sc=m.score>=8?'sc-hi':'sc-md';
+        return'<div class="sm-card"><div class="sm-card-top"><div><div class="sm-card-names">'+rb(cA.region)+' '+h(cA.name||cA.company||'')+' &nbsp;&#8594;&nbsp; '+rb(cB.region)+' '+h(cB.name||cB.company||'')+'</div><div class="sm-card-cos" style="margin-top:2px">'+h(cA.company||'')+(cA.company&&cB.company?' &middot; ':'')+h(cB.company||'')+'</div></div><div class="score '+sc+'">'+m.score+'</div></div><div class="sm-card-reason">'+h(m.reason||'')+'</div><div style="margin-top:9px;display:flex;align-items:center;gap:7px"><input type="checkbox" id="smr-'+i+'" checked style="width:13px;height:13px;cursor:pointer"><label for="smr-'+i+'" style="font-size:11px;color:var(--text2);cursor:pointer">Save to matches</label></div></div>';
+      }).join('');
+      if(res)res.innerHTML='<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Found <strong>'+newMatches.length+'</strong> match'+(newMatches.length!==1?'es':'')+' for your request:</p>'+cards+'<div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)"><button class="btn btn-primary" onclick="saveSmartMatches()">Save Selected</button><button class="btn" onclick="closeModal()">Cancel</button></div>';
+    }
+  }catch(e){if(res)res.innerHTML='<div style="color:var(--red);font-size:12px;padding:12px;background:var(--red-bg);border-radius:var(--r)">Error: '+h(e.message)+'</div>'}
+  if(btn){btn.disabled=false;btn.innerHTML='&#10024; Find Matches'}
+}
+
+async function saveSmartMatches(){
+  var newMatches=S.smartResults||[];
+  var toSave=newMatches.filter(function(m,i){var cb=document.getElementById('smr-'+i);return cb&&cb.checked});
+  var existing=new Set(S.matches.map(function(m){return m.idA+'__'+m.idB}));
+  toSave=toSave.filter(function(m){return!existing.has(m.idA+'__'+m.idB)});
+  if(!toSave.length){toast('No new matches to save.');return}
+  try{
+    await api('matches','POST',{action:'upsert',matches:toSave});
+    S.matches=S.matches.concat(toSave);
+    closeModal();toast(toSave.length+' match'+(toSave.length!==1?'es':'')+' saved!');
+    S.tab='matches';renderApp();
+  }catch(e){toast('Save error: '+e.message)}
+}
+
+// ── Matchmaking ──
+async function startMatch(){
+  if(S.matching||S.contacts.length<2){toast('Need at least 2 contacts.');return}
+  S.matching=true;renderApp();
+  try{
+    var slim=S.contacts.map(function(c){return{id:c.id,name:c.name,company:c.company,title:c.title,region:c.region,sector:c.sector,companyType:c.companyType,offers:c.offers,needs:c.needs,stage:c.stage,priority:c.priority,budget:c.budget,intent:c.intent,marketInterest:c.marketInterest}});
+    var r=await callClaude(MATCH_SYS,'All contacts:\n'+JSON.stringify(slim),1600);
+    var ex=new Set(S.matches.map(function(m){return m.idA+'__'+m.idB}));
+    var newM=(r.matches||[]).filter(function(m){return!ex.has(m.idA+'__'+m.idB)}).map(function(m){return Object.assign({},m,{id:uid(),status:'suggested',date:new Date().toISOString().slice(0,10)})});
+    if(newM.length){await api('matches','POST',{action:'upsert',matches:newM});S.matches=S.matches.concat(newM);toast(newM.length+' new matches found!');S.tab='matches'}
+    else toast('No new matches found.');
+  }catch(e){toast('Error: '+e.message)}
+  S.matching=false;renderApp();
+}
+
+// ── Add Contact Modal ──
+function openAdd(){
+  S.parsed=null;S.parseRaw='';S.parseMode='text';S.pendingFile=null;
+  showModal(addHtml());
+  setTimeout(function(){var e=document.getElementById('pta');if(e)e.focus()},80);
+}
+function addHtml(){
+  return'<div class="modal" onclick="event.stopPropagation()">'
+    +'<div class="mhd"><h2>Add Contact</h2><div class="sub">Paste text, upload a file, or enter manually</div><button class="ibt" onclick="closeModal()" style="font-size:18px">&#215;</button></div>'
+    +'<div class="mbody" id="mcontent">'+addInner()+'</div></div>';
+}
+
+function addInner(){
+  if(S.parsed)return parsedReview();
+  var secOpts=SECTORS.map(function(s){return'<option value="'+hq(s)+'">'+h(s)+'</option>'}).join('');
+  var ctOpts=CTYPES.map(function(s){return'<option value="'+hq(s)+'">'+h(s)+'</option>'}).join('');
+  var srcOpts=SOURCES.map(function(s){
+    if(s.startsWith('—'))return'<option value="" disabled>'+h(s)+'</option>';
+    return'<option value="'+hq(s)+'">'+h(s)+'</option>';
+  }).join('');
+  var budOpts=BUDGETS.map(function(s){return'<option value="'+hq(s)+'">'+h(s)+'</option>'}).join('');
+  var scaOpts=SCALES.map(function(s){return'<option value="'+hq(s)+'">'+h(s)+'</option>'}).join('');
+  var intOpts=INTENTS.map(function(s){return'<option value="'+hq(s)+'">'+h(s)+'</option>'}).join('');
+  var relOpts=RELATIONSHIPS.map(function(s){return'<option value="'+hq(s)+'">'+h(s)+'</option>'}).join('');
+  var langOpts=LANGUAGES.map(function(s){return'<option value="'+hq(s)+'">'+h(s)+'</option>'}).join('');
+  var naOpts=NEXT_ACTIONS.map(function(s){return'<option value="'+hq(s)+'">'+h(s)+'</option>'}).join('');
+
+  var textTab='<div class="fg"><label class="fl">Paste any text — WeChat chat, meeting notes, email, voice note transcript</label>'
+    +'<textarea class="fta" id="pta" style="min-height:110px" placeholder="Paste anything about a contact and AI extracts all details — name, company, WeChat, email, offers, needs, budget, intent automatically..." oninput="S.parseRaw=this.value"></textarea>'
+    +'<p class="tip">Cmd+Enter to extract &bull; Works with Chinese and English text</p></div>'
+    +'<button class="btn btn-primary" id="ext-btn" onclick="doExtract()">Extract from text &rarr;</button>';
+
+  var fileTab='<div class="drop-zone" id="drop-zone" onclick="document.getElementById(\'file-input\').click()" ondragover="event.preventDefault();this.classList.add(\'drag\')" ondragleave="this.classList.remove(\'drag\')" ondrop="handleFileDrop(event)">'
+    +'<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text3);margin-bottom:10px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
+    +'<h4>Drop a file here or click to browse</h4>'
+    +'<p>Supports: PDF, JPG, PNG, WEBP &bull; Max 4MB</p>'
+    +'</div>'
+    +'<input type="file" id="file-input" accept=".pdf,image/*" style="display:none" onchange="handleFileSelect(this)"/>'
+    +'<div id="file-preview"></div>'
+    +'<button class="btn btn-primary" id="file-ext-btn" style="display:none" onclick="doExtractFile()">Extract from file &rarr;</button>';
+
+  return'<div class="upload-tabs">'
+    +'<button class="utab '+(S.parseMode==='text'?'on':'')+'" onclick="setParseMode(\'text\')">Paste Text</button>'
+    +'<button class="utab '+(S.parseMode==='file'?'on':'')+'" onclick="setParseMode(\'file\')">Upload File</button>'
+    +'<button class="utab '+(S.parseMode==='manual'?'on':'')+'" onclick="setParseMode(\'manual\')">Manual Entry</button>'
+    +'</div>'
+    +(S.parseMode==='text'?textTab:S.parseMode==='file'?fileTab:'')
+    +(S.parseMode!=='manual'?'<div class="divider">or add manually below</div>':'')
+    +'<div class="fsec">Identity</div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Name *</label><input class="fi" id="mn" placeholder="Full name"/></div><div class="fg"><label class="fl">Title / Role</label><input class="fi" id="mt" placeholder="CEO, Sales Director..."/></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Company *</label><input class="fi" id="mc" placeholder="Company name"/></div><div class="fg"><label class="fl">Company Type</label><select class="fs" id="mct"><option value="">Select...</option>'+ctOpts+'</select></div><div class="fg"><label class="fl">Website</label><input class="fi" id="mw" placeholder="https://..."/></div></div>'
+    +'<div class="fsec">Classification</div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Region *</label><select class="fs" id="mr"><option value="china">China</option><option value="mexico">Mexico</option><option value="north_america">North America</option><option value="others">Others</option></select></div><div class="fg"><label class="fl">Sector</label><select class="fs" id="ms"><option value="">Select...</option>'+secOpts+'</select></div><div class="fg"><label class="fl">Stage</label><select class="fs" id="mst"><option value="exploring">Exploring</option><option value="active">Active</option><option value="ready">Ready</option></select></div><div class="fg"><label class="fl">Priority</label><select class="fs" id="mpr"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Intent</label><select class="fs" id="mint"><option value="">Select...</option>'+intOpts+'</select></div><div class="fg"><label class="fl">Relationship</label><select class="fs" id="mrel"><option value="">Select...</option>'+relOpts+'</select></div><div class="fg"><label class="fl">Language</label><select class="fs" id="mlng"><option value="">Select...</option>'+langOpts+'</select></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Budget</label><select class="fs" id="mbu"><option value="">Unknown</option>'+budOpts+'</select></div><div class="fg"><label class="fl">Scale</label><select class="fs" id="msc"><option value="">Unknown</option>'+scaOpts+'</select></div><div class="fg"><label class="fl">Source</label><select class="fs" id="msrc"><option value="">Select...</option>'+srcOpts+'</select></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Next Action</label><select class="fs" id="mna"><option value="">Select...</option>'+naOpts+'</select></div><div class="fg"><label class="fl">Market Interest (comma separated)</label><input class="fi" id="mmi" placeholder="Mexico Entry, USMCA, E-commerce..."/></div></div>'
+    +'<div class="fsec">Contact Info</div>'
+    +'<div class="frow"><div class="fg"><label class="fl">WeChat</label><input class="fi" id="mwc" placeholder="WeChat ID / 微信号"/></div><div class="fg"><label class="fl">WhatsApp</label><input class="fi" id="mwa" placeholder="+1 555 000 0000"/></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Email</label><input class="fi" id="mem" placeholder="email@company.com"/></div><div class="fg"><label class="fl">Phone</label><input class="fi" id="mph" placeholder="+86 / +52..."/></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">LinkedIn</label><input class="fi" id="mli" placeholder="linkedin.com/in/..."/></div><div class="fg"><label class="fl">Other Contact</label><input class="fi" id="mot" placeholder="Telegram, Line, etc."/></div></div>'
+    +'<div class="fsec">Business Details</div>'
+    +'<div class="fg"><label class="fl">Description / Notes</label><textarea class="fta" id="md" style="min-height:55px" placeholder="Who are they, what they want, context..."></textarea></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Offers (comma separated)</label><input class="fi" id="mof" placeholder="Auto parts, CNC machining..."/></div><div class="fg"><label class="fl">Needs (comma separated)</label><input class="fi" id="mnd" placeholder="Mexico distributor, Customs broker..."/></div></div>'
+    +'<div class="mfoot" style="padding:13px 0 0;border-top:1px solid var(--border);margin-top:10px;display:flex;gap:8px;justify-content:flex-end">'
+    +'<button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveManual()">Save Contact</button></div>';
+}
+
+function setParseMode(mode){
+  S.parseMode=mode;
+  var mc=document.getElementById('mcontent');if(mc)mc.innerHTML=addInner();
+  if(mode==='text'){setTimeout(function(){var ta=document.getElementById('pta');if(ta){ta.focus();if(S.parseRaw)ta.value=S.parseRaw}},30)}
+}
+
+// ── File handling ──
+function handleFileDrop(e){
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag');
+  var file=e.dataTransfer.files[0];
+  if(file)processFile(file);
+}
+function handleFileSelect(input){var file=input.files[0];if(file)processFile(file)}
+function processFile(file){
+  if(file.size>4*1024*1024){toast('File too large. Max 4MB.');return}
+  S.pendingFile=file;
+  var prev=document.getElementById('file-preview');
+  if(prev)prev.innerHTML='<div class="file-preview"><span style="font-size:18px">'+(file.type==='application/pdf'?'📄':'🖼️')+'</span><span class="fn">'+h(file.name)+'</span><span class="fs2">'+Math.round(file.size/1024)+'KB</span><button class="btn btn-ghost btn-sm" onclick="S.pendingFile=null;document.getElementById(\'file-preview\').innerHTML=\'\';document.getElementById(\'file-ext-btn\').style.display=\'none\'">&#215;</button></div>';
+  var btn=document.getElementById('file-ext-btn');
+  if(btn)btn.style.display='inline-flex';
+}
+
+async function doExtractFile(){
+  if(!S.pendingFile){toast('Select a file first.');return}
+  var btn=document.getElementById('file-ext-btn');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin spin-d"></span> Extracting...'}
+  try{
+    var reader=new FileReader();
+    reader.onload=async function(e){
+      var base64=e.target.result.split(',')[1];
+      var mediaType=S.pendingFile.type;
+      var content;
+      if(mediaType==='application/pdf'){
+        content=[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:PARSE_SYS+'\n\nExtract all business contacts from this document.'}];
+      } else {
+        content=[{type:'image',source:{type:'base64',media_type:mediaType,data:base64}},{type:'text',text:PARSE_SYS+'\n\nExtract all business contacts visible in this image (business card, screenshot, document photo, etc.).'}];
+      }
+      var r=await api('claude','POST',{max_tokens:1200,messages:[{role:'user',content:content}]});
+      if(r.error)throw new Error(r.error.message||JSON.stringify(r.error));
+      var txt=(r.content||[]).filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join('');
+      txt=txt.replace(/```json|```/g,'').trim();
+      var parsed;
+      try{parsed=JSON.parse(txt)}catch(err){var s2=txt.indexOf('{'),en2=txt.lastIndexOf('}');if(s2!==-1&&en2>s2)parsed=JSON.parse(txt.slice(s2,en2+1));else throw new Error('Could not parse response')}
+      S.parsed=(parsed.contacts||[]).map(function(c){return Object.assign({offers:[],needs:[]},c)});
+      var mc=document.getElementById('mcontent');if(mc)mc.innerHTML=addInner();
+    };
+    reader.onerror=function(){toast('Error reading file.');if(btn){btn.disabled=false;btn.innerHTML='Extract from file &rarr;'}};
+    reader.readAsDataURL(S.pendingFile);
+  }catch(e){toast('Error: '+e.message);if(btn){btn.disabled=false;btn.innerHTML='Extract from file &rarr;'}}
+}
+
+async function doExtract(){
+  var text=(document.getElementById('pta')||{}).value||S.parseRaw;text=text.trim();
+  if(!text){toast('Paste some text first.');return}
+  var btn=document.getElementById('ext-btn');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin spin-d"></span> Extracting...'}
+  try{
+    var r=await callClaude(PARSE_SYS,text,1200);
+    S.parsed=(r.contacts||[]).map(function(c){return Object.assign({offers:[],needs:[]},c)});
+    S.parseRaw=text;
+    var mc=document.getElementById('mcontent');if(mc)mc.innerHTML=addInner();
+  }catch(e){toast('Error: '+e.message)}
+  if(btn){btn.disabled=false;btn.innerHTML='Extract from text &rarr;'}
+}
+
+function parsedReview(){
+  var cards=(S.parsed||[]).map(function(c,i){
+    var rg=REGIONS[c.region]||{color:'#64748b'};
+    var contacts=[c.wechat?'WeChat: '+c.wechat:'',c.whatsapp?'WA: '+c.whatsapp:'',c.email||'',c.phone||''].filter(Boolean).join(' &bull; ');
+    var offers=(c.offers||[]).map(function(o){return'<span class="offer-tag">'+h(o)+'</span>'}).join('');
+    var needs=(c.needs||[]).map(function(n){return'<span class="need-tag">'+h(n)+'</span>'}).join('');
+    var mi=Array.isArray(c.marketInterest)?c.marketInterest.join(', '):(c.marketInterest||'');
+    return'<div class="pc" style="border-left:3px solid '+rg.color+'">'
+      +'<div class="pc-head"><div class="pc-name"><strong>'+h(c.name||'Unknown')+'</strong>'+(c.title?'<span style="color:var(--text2);font-size:12px"> &bull; '+h(c.title)+'</span>':'')+(c.company?'<div style="font-size:12px;color:var(--blue2);font-weight:600;margin-top:1px">'+h(c.company)+'</div>':'')+'</div>'
+      +'<div class="pc-ctrls">'
+      +'<select onchange="updP('+i+',\'region\',this.value)"><option value="china" '+(c.region==='china'?'selected':'')+'>China</option><option value="mexico" '+(c.region==='mexico'?'selected':'')+'>Mexico</option><option value="north_america" '+(c.region==='north_america'?'selected':'')+'>N. America</option><option value="others" '+(c.region==='others'?'selected':'')+'>Others</option></select>'
+      +'<select onchange="updP('+i+',\'stage\',this.value)"><option value="exploring" '+(c.stage==='exploring'?'selected':'')+'>Exploring</option><option value="active" '+(c.stage==='active'?'selected':'')+'>Active</option><option value="ready" '+(c.stage==='ready'?'selected':'')+'>Ready</option></select>'
+      +'<select onchange="updP('+i+',\'priority\',this.value)"><option value="low" '+(c.priority==='low'?'selected':'')+'>Low</option><option value="medium" '+(c.priority==='medium'?'selected':'')+'>Medium</option><option value="high" '+(c.priority==='high'?'selected':'')+'>High</option></select>'
+      +'</div></div>'
+      +(contacts?'<div class="pc-contacts">'+contacts+'</div>':'')
+      +(c.description?'<div class="pc-desc">'+h(c.description)+'</div>':'')
+      +(c.intent?'<div style="font-size:11px;color:var(--text2);margin-bottom:3px">Intent: <strong>'+h(c.intent)+'</strong>'+(mi?' &bull; Markets: '+h(mi):'')+'</div>':'')
+      +(c.budget&&c.budget!=='Unknown'?'<div style="font-size:11px;color:var(--text3);margin-bottom:4px">Budget: '+h(c.budget)+' &bull; Scale: '+h(c.scale||'?')+'</div>':'')
+      +(offers||needs?'<div style="margin-top:4px">'+offers+needs+'</div>':'')
+      +'</div>';
+  }).join('');
+  return'<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Found <strong>'+(S.parsed||[]).length+'</strong> contact'+(((S.parsed||[]).length!==1)?'s':'')+'. Review and confirm:</p>'
+    +cards
+    +'<div style="display:flex;gap:8px;margin-top:14px"><button class="btn btn-primary" onclick="confirmAdd()">Save All</button><button class="btn" onclick="S.parsed=null;setParseMode(S.parseMode)">Back</button></div>';
+}
+
+function updP(i,f,v){if(S.parsed&&S.parsed[i])S.parsed[i][f]=v}
+function refreshAddContent(){var mc=document.getElementById('mcontent');if(mc)mc.innerHTML=addInner();setTimeout(function(){var ta=document.getElementById('pta');if(ta&&S.parseRaw)ta.value=S.parseRaw},30)}
+
+async function confirmAdd(){
+  if(!S.parsed||!S.parsed.length)return;
+  var toAdd=S.parsed.map(function(c){return Object.assign({},c,{id:uid(),dateAdded:new Date().toISOString().slice(0,10)})});
+  S.contacts=S.contacts.concat(toAdd);closeModal();renderApp();
+  try{for(var i=0;i<toAdd.length;i++)await api('contacts','POST',{action:'upsert',contact:toAdd[i]});showSaved();}
+  catch(e){var ids=new Set(toAdd.map(function(c){return c.id}));S.contacts=S.contacts.filter(function(c){return!ids.has(c.id)});toast('Save failed: '+e.message);renderApp()}
+}
+
+async function saveManual(){
+  var name=(document.getElementById('mn')||{}).value||'';
+  var co=(document.getElementById('mc')||{}).value||'';
+  if(!name.trim()&&!co.trim()){toast('Enter a name or company.');return}
+  var parse=function(s){return(s||'').split(',').map(function(x){return x.trim()}).filter(Boolean)};
+  var mi=parse((document.getElementById('mmi')||{}).value);
+  var c={id:uid(),name:name.trim(),title:(document.getElementById('mt')||{}).value||'',company:co.trim(),companyType:(document.getElementById('mct')||{}).value||'',website:(document.getElementById('mw')||{}).value||'',region:(document.getElementById('mr')||{}).value||'china',sector:(document.getElementById('ms')||{}).value||'',stage:(document.getElementById('mst')||{}).value||'exploring',priority:(document.getElementById('mpr')||{}).value||'low',intent:(document.getElementById('mint')||{}).value||'',relationship:(document.getElementById('mrel')||{}).value||'',language:(document.getElementById('mlng')||{}).value||'',marketInterest:mi,nextAction:(document.getElementById('mna')||{}).value||'',budget:(document.getElementById('mbu')||{}).value||'Unknown',scale:(document.getElementById('msc')||{}).value||'Unknown',source:(document.getElementById('msrc')||{}).value||'',wechat:(document.getElementById('mwc')||{}).value||'',whatsapp:(document.getElementById('mwa')||{}).value||'',email:(document.getElementById('mem')||{}).value||'',phone:(document.getElementById('mph')||{}).value||'',linkedin:(document.getElementById('mli')||{}).value||'',otherContact:(document.getElementById('mot')||{}).value||'',description:(document.getElementById('md')||{}).value||'',offers:parse((document.getElementById('mof')||{}).value),needs:parse((document.getElementById('mnd')||{}).value),dateAdded:new Date().toISOString().slice(0,10)};
+  S.contacts.push(c);closeModal();renderApp();
+  try{await api('contacts','POST',{action:'upsert',contact:c});showSaved()}
+  catch(e){S.contacts=S.contacts.filter(function(x){return x.id!==c.id});toast('Save failed: '+e.message);renderApp()}
+}
+
+// ── Edit ──
+function editC(id){
+  var c=S.contacts.find(function(x){return x.id===id});if(!c)return;S.editing=c;
+  var mk=function(arr,cur){return arr.map(function(s){if(s.startsWith('—'))return'<option value="" disabled>'+h(s)+'</option>';return'<option value="'+hq(s)+'" '+(s===cur?'selected':'')+'>'+h(s)+'</option>'}).join('')};
+  var secOpts=SECTORS.map(function(s){return'<option value="'+hq(s)+'" '+(c.sector===s?'selected':'')+'>'+h(s)+'</option>'}).join('');
+  var ctOpts=CTYPES.map(function(s){return'<option value="'+hq(s)+'" '+(c.companyType===s?'selected':'')+'>'+h(s)+'</option>'}).join('');
+  var mi=Array.isArray(c.marketInterest)?c.marketInterest.join(', '):(c.marketInterest||'');
+  showModal('<div class="modal" onclick="event.stopPropagation()">'
+    +'<div class="mhd"><h2>Edit Contact</h2><div class="sub">'+h(c.name||c.company||'')+'</div><button class="ibt" onclick="closeModal()" style="font-size:18px">&#215;</button></div>'
+    +'<div class="mbody">'
+    +'<div class="fsec">Identity</div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Name</label><input class="fi" id="en" value="'+hq(c.name||'')+'"/></div><div class="fg"><label class="fl">Title</label><input class="fi" id="et" value="'+hq(c.title||'')+'"/></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Company</label><input class="fi" id="ec" value="'+hq(c.company||'')+'"/></div><div class="fg"><label class="fl">Type</label><select class="fs" id="ect"><option value="">Select...</option>'+ctOpts+'</select></div><div class="fg"><label class="fl">Website</label><input class="fi" id="ew" value="'+hq(c.website||'')+'"/></div></div>'
+    +'<div class="fsec">Classification</div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Region</label><select class="fs" id="er"><option value="china" '+(c.region==='china'?'selected':'')+'>China</option><option value="mexico" '+(c.region==='mexico'?'selected':'')+'>Mexico</option><option value="north_america" '+(c.region==='north_america'?'selected':'')+'>N. America</option><option value="others" '+(c.region==='others'?'selected':'')+'>Others</option></select></div><div class="fg"><label class="fl">Sector</label><select class="fs" id="es"><option value="">Select...</option>'+secOpts+'</select></div><div class="fg"><label class="fl">Stage</label><select class="fs" id="est"><option value="exploring" '+(c.stage==='exploring'?'selected':'')+'>Exploring</option><option value="active" '+(c.stage==='active'?'selected':'')+'>Active</option><option value="ready" '+(c.stage==='ready'?'selected':'')+'>Ready</option></select></div><div class="fg"><label class="fl">Priority</label><select class="fs" id="epr"><option value="low" '+(c.priority==='low'?'selected':'')+'>Low</option><option value="medium" '+(c.priority==='medium'?'selected':'')+'>Medium</option><option value="high" '+(c.priority==='high'?'selected':'')+'>High</option></select></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Intent</label><select class="fs" id="eint"><option value="">Select...</option>'+mk(INTENTS,c.intent)+'</select></div><div class="fg"><label class="fl">Relationship</label><select class="fs" id="erel"><option value="">Select...</option>'+mk(RELATIONSHIPS,c.relationship)+'</select></div><div class="fg"><label class="fl">Language</label><select class="fs" id="elng"><option value="">Select...</option>'+mk(LANGUAGES,c.language)+'</select></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Budget</label><select class="fs" id="ebu"><option value="">Unknown</option>'+BUDGETS.map(function(s){return'<option value="'+hq(s)+'" '+(c.budget===s?'selected':'')+'>'+h(s)+'</option>'}).join('')+'</select></div><div class="fg"><label class="fl">Scale</label><select class="fs" id="esc"><option value="">Unknown</option>'+SCALES.map(function(s){return'<option value="'+hq(s)+'" '+(c.scale===s?'selected':'')+'>'+h(s)+'</option>'}).join('')+'</select></div><div class="fg"><label class="fl">Source</label><select class="fs" id="esrc"><option value="">Select...</option>'+mk(SOURCES,c.source)+'</select></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Next Action</label><select class="fs" id="ena"><option value="">Select...</option>'+mk(NEXT_ACTIONS,c.nextAction)+'</select></div><div class="fg"><label class="fl">Market Interest</label><input class="fi" id="emi" value="'+hq(mi)+'"/></div></div>'
+    +'<div class="fsec">Contact Info</div>'
+    +'<div class="frow"><div class="fg"><label class="fl">WeChat</label><input class="fi" id="ewc" value="'+hq(c.wechat||'')+'"/></div><div class="fg"><label class="fl">WhatsApp</label><input class="fi" id="ewa" value="'+hq(c.whatsapp||'')+'"/></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Email</label><input class="fi" id="eem" value="'+hq(c.email||'')+'"/></div><div class="fg"><label class="fl">Phone</label><input class="fi" id="eph" value="'+hq(c.phone||'')+'"/></div></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">LinkedIn</label><input class="fi" id="eli" value="'+hq(c.linkedin||'')+'"/></div><div class="fg"><label class="fl">Other</label><input class="fi" id="eot" value="'+hq(c.otherContact||'')+'"/></div></div>'
+    +'<div class="fsec">Business Details</div>'
+    +'<div class="fg"><label class="fl">Description</label><textarea class="fta" id="ed" style="min-height:55px">'+h(c.description||'')+'</textarea></div>'
+    +'<div class="frow"><div class="fg"><label class="fl">Offers</label><input class="fi" id="eof" value="'+hq((c.offers||[]).join(', '))+'"/></div><div class="fg"><label class="fl">Needs</label><input class="fi" id="end2" value="'+hq((c.needs||[]).join(', '))+'"/></div></div>'
+    +'</div>'
+    +'<div class="mfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEdit()">Save Changes</button></div></div>');
+}
+
+async function saveEdit(){
+  var c=S.editing;if(!c)return;
+  var parse=function(s){return(s||'').split(',').map(function(x){return x.trim()}).filter(Boolean)};
+  function v(id){return(document.getElementById(id)||{}).value||''}
+  var orig=Object.assign({},c);
+  Object.assign(c,{name:v('en'),title:v('et'),company:v('ec'),companyType:v('ect'),website:v('ew'),region:v('er'),sector:v('es'),stage:v('est'),priority:v('epr'),intent:v('eint'),relationship:v('erel'),language:v('elng'),marketInterest:parse(v('emi')),nextAction:v('ena'),budget:v('ebu'),scale:v('esc'),source:v('esrc'),wechat:v('ewc'),whatsapp:v('ewa'),email:v('eem'),phone:v('eph'),linkedin:v('eli'),otherContact:v('eot'),description:v('ed'),offers:parse(v('eof')),needs:parse(v('end2'))});
+  closeModal();renderApp();
+  try{await api('contacts','POST',{action:'upsert',contact:c});showSaved()}
+  catch(e){Object.assign(c,orig);toast('Save failed: '+e.message);renderApp()}
+}
+
+// ── Delete ──
+async function delC(id){
+  if(!confirm('Delete this contact and their matches?'))return;
+  var prev=S.contacts.slice(),prevM=S.matches.slice();
+  S.contacts=S.contacts.filter(function(c){return c.id!==id});
+  S.matches=S.matches.filter(function(m){return m.idA!==id&&m.idB!==id});
+  delete S.expanded[id];renderApp();
+  try{await api('contacts','POST',{action:'delete',id:id});showSaved()}
+  catch(e){S.contacts=prev;S.matches=prevM;toast('Delete failed: '+e.message);renderApp()}
+}
+async function delM(id){
+  var prev=S.matches.slice();
+  S.matches=S.matches.filter(function(m){return m.id!==id});
+  delete S.mExpanded[id];renderContent();
+  try{await api('matches','POST',{action:'delete',id:id});showSaved()}
+  catch(e){S.matches=prev;toast('Delete failed: '+e.message);renderContent()}
+}
+async function updMStatus(id,status){
+  var m=S.matches.find(function(x){return x.id===id});if(!m)return;
+  var prev=m.status;m.status=status;
+  try{await api('matches','POST',{action:'update_status',id:id,status:status});showSaved()}
+  catch(e){m.status=prev;toast('Update failed: '+e.message)}
+}
+
+// ── Export ──
+function toggleDropMenu(){
+  S.exportOpen=!S.exportOpen;
+  var m=document.getElementById('exp-menu');if(m)m.className='drop-menu'+(S.exportOpen?' open':'');
+}
+document.addEventListener('click',function(e){
+  var drop=document.getElementById('exp-drop');
+  if(drop&&!drop.contains(e.target)){S.exportOpen=false;var m=document.getElementById('exp-menu');if(m)m.className='drop-menu'}
+});
+
+async function downloadExcel(){
+  S.exportOpen=false;var m=document.getElementById('exp-menu');if(m)m.className='drop-menu';
+  toast('Generating Excel...',5000);
+  try{
+    var res=await fetch('/api/export',{headers:{'Authorization':'Bearer '+(S.session||'')}});
+    if(!res.ok)throw new Error('Export failed: '+res.statusText);
+    var blob=await res.blob();
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');a.href=url;a.download='synersage-crm-'+new Date().toISOString().slice(0,10)+'.xlsx';a.click();
+    URL.revokeObjectURL(url);toast('Excel downloaded.');
+  }catch(e){toast('Export error: '+e.message)}
+}
+
+function downloadJSON(){
+  S.exportOpen=false;var m=document.getElementById('exp-menu');if(m)m.className='drop-menu';
+  var data={version:3,app:'SynerSage CRM',exportedAt:new Date().toISOString(),contacts:S.contacts,matches:S.matches};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='synersage-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  URL.revokeObjectURL(url);toast('Backup downloaded.');
+}
+function triggerImport(){S.exportOpen=false;document.getElementById('import-file').click()}
+async function restoreJSON(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=async function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      var contacts=data.contacts||[];var matches=data.matches||[];
+      if(!confirm('Import '+contacts.length+' contacts and '+matches.length+' matches? (Merges, no overwrite)'))return;
+      toast('Importing...',5000);
+      await api('contacts','POST',{action:'import',contacts:contacts});
+      await api('matches','POST',{action:'import',matches:matches});
+      var results=await Promise.all([api('contacts'),api('matches')]);
+      S.contacts=results[0]||[];S.matches=results[1]||[];
+      renderApp();toast('Import complete!');
+    }catch(err){toast('Error: '+err.message)}
+  };
+  reader.readAsText(file);input.value='';
+}
+
+// ── Helpers ──
+function count(r){return S.contacts.filter(function(c){return c.region===r}).length}
+function setTab(t){S.tab=t;S.expanded={};S.mExpanded={};renderApp()}
+function setF(k,v){S.filters[k]=v;renderFilters();renderContent()}
+function setMF(v){S.mFilter=v;renderFilters();renderContent()}
+function clearF(){S.filters={q:'',region:'all',sector:'all',stage:'all',priority:'all'};renderFilters();renderContent()}
+function showModal(html){var ov=document.getElementById('overlay');if(!ov)return;ov.innerHTML=html;ov.style.display='flex'}
+function closeModal(){var ov=document.getElementById('overlay');if(ov){ov.style.display='none';ov.innerHTML=''}S.editing=null;S.parsed=null}
+function overlayClick(e){if(e.target===document.getElementById('overlay'))closeModal()}
+document.addEventListener('keydown',function(e){
+  if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){var ta=document.getElementById('pta');if(ta&&document.activeElement===ta)doExtract()}
+  if(e.key==='Escape')closeModal();
+});
+
+init();
+</script>
+</body>
+</html>
